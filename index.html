@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ricettine — La Gazzetta della Cucina</title>
+<meta name="description" content="Ricettine: ricette italiane in stile gazzetta, con porzioni regolabili e procedimento per induzione o fuoco." />
+
+<!-- Editorial typefaces: Bodoni (an Italian typeface) for the masthead, Spectral for reading -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;0,6..96,700;0,6..96,900;1,6..96,500&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<!-- Cross-platform flags (works on Windows too, unlike emoji flags) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.2.3/css/flag-icons.min.css" />
+
+<style>
+:root{
+  --paper:#F4EFE2;        /* warm newsprint */
+  --paper-2:#EDE6D4;      /* boxed panels */
+  --ink:#1B1712;          /* espresso near-black */
+  --ink-soft:#4A443A;
+  --muted:#8A8272;        /* captions / credit */
+  --rosso:#A81E22;        /* Italian printer's red — used sparingly */
+  --oliva:#5B6236;        /* basil/olive secondary */
+  --line:#211D17;
+  --hair:rgba(27,23,18,.28);
+  --dot:rgba(27,23,18,.55);
+  --shadow:0 1px 0 rgba(27,23,18,.12);
+  --maxw:1140px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:"Spectral",Georgia,serif;font-weight:400;line-height:1.55;
+  font-size:18px;
+  /* faint paper grain */
+  background-image:
+    radial-gradient(rgba(27,23,18,.020) 1px, transparent 1.4px);
+  background-size:3px 3px;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+
+/* ---------- layout shell ---------- */
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px}
+.rule{border:0;border-top:1px solid var(--line);margin:0}
+.rule--double{border:0;border-top:3px double var(--line);margin:0}
+.rule--thin{border:0;border-top:1px solid var(--hair)}
+
+/* ---------- masthead ---------- */
+header.masthead{padding-top:14px}
+.topline{display:flex;justify-content:space-between;align-items:flex-end;
+  font-family:"Spectral";font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-soft);padding-bottom:8px;gap:14px;flex-wrap:wrap}
+.topline .edition{color:var(--rosso);font-weight:600}
+.brand{ text-align:center;padding:10px 0 6px }
+.brand h1{
+  font-family:"Bodoni Moda",serif;font-weight:900;font-optical-sizing:auto;
+  font-size:clamp(52px,11vw,132px);line-height:.9;margin:0;letter-spacing:.5px;
+}
+.brand .motto{font-style:italic;color:var(--ink-soft);font-size:clamp(13px,2.6vw,17px);margin-top:8px;letter-spacing:.02em}
+.dateline{display:flex;justify-content:space-between;align-items:center;gap:14px;
+  font-family:"Spectral";font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-soft);padding:8px 0}
+
+/* flags */
+.flags{display:flex;gap:8px;align-items:center}
+.flags button{
+  all:unset;cursor:pointer;line-height:0;border-radius:2px;
+  outline:2px solid transparent;outline-offset:2px;opacity:.55;transition:opacity .18s, box-shadow .18s;
+  box-shadow:0 0 0 1px var(--hair);
+}
+.flags button .fi{width:26px;height:18px;border-radius:2px}
+.flags button:hover{opacity:.9}
+.flags button[aria-current="true"]{opacity:1;box-shadow:0 0 0 2px var(--rosso)}
+.flags button:focus-visible{outline-color:var(--rosso)}
+
+/* section nav */
+nav.sections{display:flex;justify-content:center;flex-wrap:wrap;gap:0;
+  font-family:"Spectral";text-transform:uppercase;letter-spacing:.16em;font-size:13.5px;
+  padding:2px 0}
+nav.sections a{padding:12px 20px;color:var(--ink-soft);position:relative;font-weight:500;transition:color .15s}
+nav.sections a + a{border-left:1px solid var(--hair)}
+nav.sections a:hover{color:var(--ink)}
+nav.sections a[aria-current="true"]{color:var(--rosso)}
+nav.sections a[aria-current="true"]::after{content:"";position:absolute;left:20px;right:20px;bottom:5px;height:2px;background:var(--rosso)}
+
+/* ---------- front page grid ---------- */
+main{padding:26px 0 60px}
+.section-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin:6px 0 16px}
+.section-head h2{font-family:"Bodoni Moda",serif;font-weight:700;font-size:clamp(26px,5vw,40px);margin:0}
+.section-head .kicker{font-family:"Spectral";text-transform:uppercase;letter-spacing:.18em;font-size:12px;color:var(--rosso)}
+
+.frontpage{display:grid;grid-template-columns:2fr 1fr;gap:0}
+.frontpage > .lead{border-right:1px solid var(--hair);padding-right:28px}
+.frontpage > .aside{padding-left:28px;display:flex;flex-direction:column}
+@media(max-width:820px){
+  .frontpage{grid-template-columns:1fr}
+  .frontpage > .lead{border-right:0;padding-right:0;border-bottom:3px double var(--line);padding-bottom:20px;margin-bottom:20px}
+  .frontpage > .aside{padding-left:0}
+}
+
+/* article card */
+.card{cursor:pointer;display:block;margin-bottom:22px}
+.card:last-child{margin-bottom:0}
+.card .figure{position:relative;overflow:hidden;background:var(--paper-2);border:1px solid var(--hair)}
+.card .headline{font-family:"Bodoni Moda",serif;font-weight:700;line-height:1.02;margin:12px 0 4px;
+  transition:color .15s}
+.card:hover .headline{color:var(--rosso)}
+.card .stand{color:var(--ink-soft);font-size:15px;line-height:1.45;font-style:italic}
+.card .byline{font-family:"Spectral";text-transform:uppercase;letter-spacing:.14em;font-size:11px;color:var(--muted);margin-top:8px;display:flex;gap:10px;flex-wrap:wrap}
+.card .byline .dot{color:var(--hair)}
+
+.lead .card .headline{font-size:clamp(30px,5.4vw,46px)}
+.lead .card .stand{font-size:18px}
+.aside .card{border-bottom:1px solid var(--hair);padding-bottom:20px}
+.aside .card:last-child{border-bottom:0}
+.aside .card .headline{font-size:22px}
+.aside .card .figure{aspect-ratio:16/10}
+.lead .card .figure{aspect-ratio:3/2}
+
+/* ---------- photo / halftone treatment ---------- */
+.photo{position:relative;overflow:hidden;background:var(--paper-2)}
+.photo img{width:100%;height:100%;object-fit:cover;
+  filter:grayscale(1) contrast(1.12) brightness(1.03) sepia(.06);
+  transition:filter .35s ease}
+.photo::after{ /* halftone dot screen */
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:radial-gradient(var(--dot) 22%, transparent 23%);
+  background-size:3.2px 3.2px;mix-blend-mode:multiply;opacity:.28;
+  transition:opacity .35s}
+body.color .photo img{filter:grayscale(0) contrast(1.03) saturate(1.02)}
+body.color .photo::after{opacity:0}
+
+/* illustration placeholder (engraved look) */
+.placeholder{width:100%;height:100%;display:block}
+.placeholder svg{width:100%;height:100%;display:block}
+
+figure.lead-photo{margin:0}
+figure.lead-photo .photo{aspect-ratio:3/2;border:1px solid var(--line)}
+figcaption{font-family:"Spectral";font-size:13px;color:var(--muted);padding-top:8px;
+  display:flex;justify-content:space-between;gap:14px;border-bottom:1px solid var(--hair);padding-bottom:10px}
+figcaption .credit{font-style:italic}
+
+/* ---------- recipe article ---------- */
+.article{display:none}
+.article.active{display:block}
+.list-view{display:block}
+.list-view.hidden{display:none}
+
+.backbar{display:flex;align-items:center;gap:10px;font-family:"Spectral";
+  text-transform:uppercase;letter-spacing:.14em;font-size:12px;color:var(--rosso);
+  cursor:pointer;padding:4px 0;margin-bottom:8px;width:max-content}
+.backbar:hover{text-decoration:underline}
+
+.art-head{text-align:center;max-width:820px;margin:8px auto 20px}
+.art-kicker{font-family:"Spectral";text-transform:uppercase;letter-spacing:.2em;font-size:12px;color:var(--rosso)}
+.art-head h2{font-family:"Bodoni Moda",serif;font-weight:900;font-size:clamp(34px,7vw,64px);line-height:.98;margin:10px 0 8px}
+.art-stand{font-style:italic;color:var(--ink-soft);font-size:clamp(16px,2.6vw,20px)}
+.art-meta{display:flex;justify-content:center;flex-wrap:wrap;gap:0;margin-top:16px;
+  font-family:"Spectral";text-transform:uppercase;letter-spacing:.13em;font-size:12px;color:var(--ink-soft)}
+.art-meta span{padding:0 16px}
+.art-meta span + span{border-left:1px solid var(--hair)}
+.art-meta b{color:var(--ink);font-weight:600}
+
+.art-body{max-width:960px;margin:0 auto}
+
+/* control panel — the live "riquadro" */
+.panel{border:1px solid var(--line);background:var(--paper-2);margin:22px 0;
+  display:grid;grid-template-columns:1fr 1fr;gap:0}
+.panel .cell{padding:16px 20px}
+.panel .cell + .cell{border-left:1px solid var(--hair)}
+.panel .lbl{font-family:"Spectral";text-transform:uppercase;letter-spacing:.16em;font-size:11px;color:var(--muted);margin-bottom:10px}
+@media(max-width:640px){.panel{grid-template-columns:1fr}.panel .cell + .cell{border-left:0;border-top:1px solid var(--hair)}}
+
+.stepper{display:flex;align-items:center;gap:14px}
+.stepper button{all:unset;cursor:pointer;width:40px;height:40px;display:grid;place-items:center;
+  border:1px solid var(--line);border-radius:50%;font-size:22px;line-height:1;
+  font-family:"Spectral";transition:background .15s,color .15s}
+.stepper button:hover{background:var(--ink);color:var(--paper)}
+.stepper button:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
+.stepper button[disabled]{opacity:.35;cursor:not-allowed}
+.stepper .count{font-family:"Bodoni Moda",serif;font-weight:700;font-size:32px;min-width:2ch;text-align:center}
+.stepper .unit{font-family:"Spectral";font-size:14px;color:var(--ink-soft)}
+
+.toggle{display:inline-flex;border:1px solid var(--line);border-radius:2px;overflow:hidden}
+.toggle button{all:unset;cursor:pointer;padding:10px 16px;font-family:"Spectral";
+  font-size:14px;letter-spacing:.04em;display:flex;align-items:center;gap:8px;transition:background .15s,color .15s}
+.toggle button + button{border-left:1px solid var(--line)}
+.toggle button[aria-pressed="true"]{background:var(--oliva);color:var(--paper)}
+.toggle button:focus-visible{outline:2px solid var(--rosso);outline-offset:-2px}
+.toggle .ic{font-size:15px}
+
+.viewtoggle{all:unset;cursor:pointer;font-family:"Spectral";font-size:13px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink-soft);border-bottom:1px solid var(--hair);padding-bottom:2px}
+.viewtoggle:hover{color:var(--rosso);border-color:var(--rosso)}
+
+/* two column body: factbox + procedure */
+.cols{display:grid;grid-template-columns:340px 1fr;gap:34px;margin-top:28px}
+@media(max-width:820px){.cols{grid-template-columns:1fr;gap:24px}}
+
+.factbox{border:1px solid var(--line);padding:20px;height:max-content;background:linear-gradient(0deg,rgba(27,23,18,.015),transparent)}
+.factbox h3, .procedure h3{font-family:"Bodoni Moda",serif;font-weight:700;font-size:22px;margin:0 0 4px;
+  display:flex;align-items:baseline;justify-content:space-between}
+.factbox .subttl{font-family:"Spectral";text-transform:uppercase;letter-spacing:.14em;font-size:11px;color:var(--rosso);margin-bottom:14px}
+.ingredients{list-style:none;margin:0;padding:0}
+.ingredients li{display:flex;justify-content:space-between;gap:12px;align-items:baseline;
+  padding:9px 0;border-bottom:1px dotted var(--hair)}
+.ingredients li:last-child{border-bottom:0}
+.ingredients .name{}
+.ingredients .qty{font-family:"Spectral";font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap;color:var(--ink)}
+.ingredients .qty.qb{font-style:italic;font-weight:400;color:var(--muted)}
+.ing-note{font-size:13px;color:var(--muted);font-style:italic}
+
+.equip{margin-top:22px;border-top:3px double var(--line);padding-top:16px}
+.equip h4{font-family:"Spectral";text-transform:uppercase;letter-spacing:.16em;font-size:12px;color:var(--muted);margin:0 0 10px}
+.equip ul{list-style:none;margin:0;padding:0}
+.equip li{padding:5px 0;font-size:15.5px;display:flex;gap:10px}
+.equip li::before{content:"—";color:var(--oliva)}
+
+.procedure h3{border-bottom:3px double var(--line);padding-bottom:8px;display:block}
+.steps{list-style:none;margin:16px 0 0;padding:0;counter-reset:step}
+.steps li{position:relative;padding:0 0 22px 56px;counter-increment:step}
+.steps li::before{content:counter(step);position:absolute;left:0;top:-4px;
+  font-family:"Bodoni Moda",serif;font-weight:700;font-size:34px;color:var(--rosso);line-height:1}
+.steps li p{margin:0}
+.steps li:first-child p::first-letter{
+  font-family:"Bodoni Moda",serif;font-weight:900;font-size:3.1em;line-height:.72;
+  float:left;padding:6px 10px 0 0;color:var(--ink)}
+.method-tag{display:inline-block;font-family:"Spectral";text-transform:uppercase;letter-spacing:.1em;
+  font-size:10.5px;color:var(--paper);background:var(--oliva);padding:2px 7px;border-radius:2px;margin-left:8px;vertical-align:middle}
+
+/* footer */
+footer{border-top:3px double var(--line);margin-top:40px;padding:26px 0 60px;
+  text-align:center;font-family:"Spectral";color:var(--muted);font-size:13px;letter-spacing:.04em}
+footer .fbrand{font-family:"Bodoni Moda",serif;font-weight:700;font-size:22px;color:var(--ink);letter-spacing:.5px}
+
+/* fade in */
+@media(prefers-reduced-motion:no-preference){
+  .fade{animation:fade .4s ease both}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+}
+</style>
+</head>
+<body class="it">
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="topline">
+      <span class="edition" id="tl-edition">Edizione di casa</span>
+      <span id="tl-price">Prezzo · un sorriso</span>
+    </div>
+    <hr class="rule--double" />
+    <div class="brand">
+      <h1>Ricettine</h1>
+      <div class="motto" id="motto">La piccola gazzetta della cucina italiana</div>
+    </div>
+    <hr class="rule" />
+    <div class="dateline">
+      <span id="dateline-left">—</span>
+      <div class="flags" id="flags" role="group" aria-label="Lingua / Language"></div>
+    </div>
+    <hr class="rule--double" />
+    <nav class="sections" id="nav"></nav>
+    <hr class="rule" />
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- LIST / FRONT PAGE -->
+  <section class="list-view" id="listView">
+    <div class="section-head">
+      <h2 id="sectionTitle">Primi</h2>
+      <span class="kicker" id="sectionKicker">La prima pagina</span>
+    </div>
+    <div class="frontpage" id="frontpage"></div>
+  </section>
+
+  <!-- RECIPE ARTICLE -->
+  <article class="article" id="articleView"></article>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="fbrand">Ricettine</div>
+    <p id="foot-line">Pubblicato con amore · le porzioni si regolano, il gusto no.</p>
+  </div>
+</footer>
+
+<script>
+"use strict";
+
+/* =========================================================================
+   1) INTERFACE TRANSLATIONS (the chrome: menus, labels, buttons)
+   Recipe *content* is translated separately inside each recipe object.
+   ========================================================================= */
+const LANGS = [
+  {code:"it", flag:"it", label:"Italiano"},
+  {code:"en", flag:"gb", label:"English"},
+  {code:"de", flag:"de", label:"Deutsch"},
+  {code:"fr", flag:"fr", label:"Français"},
+  {code:"es", flag:"es", label:"Español"},
+];
+
+const I18N = {
+  it:{ motto:"La piccola gazzetta della cucina italiana", edition:"Edizione di casa", price:"Prezzo · un sorriso",
+    frontpage:"La prima pagina", back:"Torna alla prima pagina",
+    prep:"Preparazione", cook:"Cottura", difficulty:"Difficoltà", min:"min",
+    facile:"Facile", media:"Media", difficile:"Difficile",
+    servingsLbl:"Porzioni", methodLbl:"Metodo di cottura", viewLbl:"Foto",
+    fire:"Fuoco", induction:"Induzione", seeColor:"Vedi a colori", seeBW:"Vedi in bianco e nero",
+    ingredients:"Ingredienti", forX:"per", equipment:"Attrezzatura consigliata", procedure:"Procedimento",
+    qb:"q.b.", persone:"persone", persona:"persona", bicchieri:"bicchieri", bicchiere:"bicchiere",
+    foot:"Pubblicato con amore · le porzioni si regolano, il gusto no.", illustration:"Illustrazione della redazione",
+    sections:{primi:"Primi", secondi:"Secondi", dolci:"Dolci", cocktail:"Cocktail"} },
+  en:{ motto:"The little gazette of Italian cooking", edition:"Home edition", price:"Price · one smile",
+    frontpage:"Front page", back:"Back to the front page",
+    prep:"Prep", cook:"Cook", difficulty:"Difficulty", min:"min",
+    facile:"Easy", media:"Medium", difficile:"Hard",
+    servingsLbl:"Servings", methodLbl:"Cooking method", viewLbl:"Photo",
+    fire:"Gas", induction:"Induction", seeColor:"See in colour", seeBW:"See in black & white",
+    ingredients:"Ingredients", forX:"for", equipment:"Recommended equipment", procedure:"Method",
+    qb:"to taste", persone:"people", persona:"person", bicchieri:"glasses", bicchiere:"glass",
+    foot:"Published with love · portions scale, taste doesn't.", illustration:"Newsroom illustration",
+    sections:{primi:"First courses", secondi:"Mains", dolci:"Desserts", cocktail:"Cocktails"} },
+  de:{ motto:"Die kleine Gazette der italienischen Küche", edition:"Hausausgabe", price:"Preis · ein Lächeln",
+    frontpage:"Titelseite", back:"Zurück zur Titelseite",
+    prep:"Vorbereitung", cook:"Garzeit", difficulty:"Schwierigkeit", min:"Min",
+    facile:"Einfach", media:"Mittel", difficile:"Schwer",
+    servingsLbl:"Portionen", methodLbl:"Kochmethode", viewLbl:"Foto",
+    fire:"Gas", induction:"Induktion", seeColor:"In Farbe ansehen", seeBW:"In Schwarzweiß ansehen",
+    ingredients:"Zutaten", forX:"für", equipment:"Empfohlene Ausstattung", procedure:"Zubereitung",
+    qb:"nach Belieben", persone:"Personen", persona:"Person", bicchieri:"Gläser", bicchiere:"Glas",
+    foot:"Mit Liebe veröffentlicht · Portionen skalieren, Geschmack nicht.", illustration:"Illustration der Redaktion",
+    sections:{primi:"Erste Gänge", secondi:"Hauptgänge", dolci:"Desserts", cocktail:"Cocktails"} },
+  fr:{ motto:"La petite gazette de la cuisine italienne", edition:"Édition maison", price:"Prix · un sourire",
+    frontpage:"Une", back:"Retour à la une",
+    prep:"Préparation", cook:"Cuisson", difficulty:"Difficulté", min:"min",
+    facile:"Facile", media:"Moyenne", difficile:"Difficile",
+    servingsLbl:"Portions", methodLbl:"Mode de cuisson", viewLbl:"Photo",
+    fire:"Gaz", induction:"Induction", seeColor:"Voir en couleur", seeBW:"Voir en noir et blanc",
+    ingredients:"Ingrédients", forX:"pour", equipment:"Matériel conseillé", procedure:"Préparation",
+    qb:"selon le goût", persone:"personnes", persona:"personne", bicchieri:"verres", bicchiere:"verre",
+    foot:"Publié avec amour · les portions s'ajustent, le goût non.", illustration:"Illustration de la rédaction",
+    sections:{primi:"Entrées", secondi:"Plats", dolci:"Desserts", cocktail:"Cocktails"} },
+  es:{ motto:"La pequeña gaceta de la cocina italiana", edition:"Edición de casa", price:"Precio · una sonrisa",
+    frontpage:"Portada", back:"Volver a la portada",
+    prep:"Preparación", cook:"Cocción", difficulty:"Dificultad", min:"min",
+    facile:"Fácil", media:"Media", difficile:"Difícil",
+    servingsLbl:"Raciones", methodLbl:"Método de cocción", viewLbl:"Foto",
+    fire:"Fuego", induction:"Inducción", seeColor:"Ver en color", seeBW:"Ver en blanco y negro",
+    ingredients:"Ingredientes", forX:"para", equipment:"Equipo recomendado", procedure:"Elaboración",
+    qb:"al gusto", persone:"personas", persona:"persona", bicchieri:"vasos", bicchiere:"vaso",
+    foot:"Publicado con amor · las raciones se ajustan, el sabor no.", illustration:"Ilustración de la redacción",
+    sections:{primi:"Primeros", secondi:"Segundos", dolci:"Postres", cocktail:"Cócteles"} },
+};
+
+const SECTIONS = ["primi","secondi","dolci","cocktail"];
+
+/* =========================================================================
+   2) RECIPE DATA
+   ---------------------------------------------------------------------------
+   Everything is authored for 2 servings, on INDUCTION. Scaling to any number
+   of servings and the GAS variant of each step are produced automatically /
+   authored per step below. Add new recipes by pushing objects into this array
+   (see recipe-template.js / README for the schema & how to hand them to me).
+   ========================================================================= */
+const RECIPES = [
+/* ---------- PRIMI ---------- */
+{
+  id:"spaghetti-aglio-olio-peperoncino",
+  section:"primi",
+  featured:true,
+  servingsBase:2,
+  servingsUnit:"persone",
+  time:{prep:5, cook:15},
+  difficulty:"facile",
+  image:null,                 // put "images/spaghetti.jpg" here when you add a photo
+  title:{ it:"Spaghetti aglio, olio e peperoncino", en:"Spaghetti with garlic, oil & chilli" },
+  standfirst:{ it:"Il piatto di mezzanotte: quattro ingredienti, nessuna scusa.",
+               en:"The midnight plate: four ingredients, no excuses." },
+  caption:{ it:"Spaghetti mantecati con olio all'aglio e peperoncino.",
+            en:"Spaghetti tossed in garlic-chilli oil." },
+  ingredients:[
+    { name:{it:"Spaghetti", en:"Spaghetti"}, qty:180, unit:"g" },
+    { name:{it:"Aglio", en:"Garlic"}, qty:2, unit:"", note:{it:"spicchi", en:"cloves"} },
+    { name:{it:"Olio extravergine", en:"Extra-virgin olive oil"}, qty:40, unit:"ml" },
+    { name:{it:"Peperoncino fresco", en:"Fresh chilli"}, qty:1, unit:"" },
+    { name:{it:"Prezzemolo", en:"Parsley"}, qty:null, unit:"qb" },
+    { name:{it:"Sale grosso", en:"Coarse salt"}, qty:null, unit:"qb", note:{it:"per l'acqua", en:"for the water"} },
+  ],
+  equipment:[
+    {it:"Pentola capiente", en:"Large pot"},
+    {it:"Padella larga", en:"Wide frying pan"},
+    {it:"Pinza da cucina", en:"Kitchen tongs"},
+    {it:"Mestolo", en:"Ladle"},
+  ],
+  steps:[
+    { induction:{ it:"Porta a bollore abbondante acqua in pentola a potenza massima; quando bolle, sala e cala gli spaghetti.",
+                  en:"Bring plenty of water to the boil on full power; once boiling, salt it and drop in the spaghetti." },
+      gas:{ it:"Metti l'acqua sul fuoco a fiamma viva e copri col coperchio per farla bollire prima; appena bolle, sala e cala gli spaghetti.",
+            en:"Set the water over a high flame with the lid on to boil faster; as soon as it boils, salt it and add the spaghetti." } },
+    { induction:{ it:"Nel frattempo scalda l'olio in padella a potenza medio-bassa (circa 4/9) con l'aglio a fettine e il peperoncino: l'induzione risponde subito, quindi togli calore appena l'aglio profuma, senza farlo colorire.",
+                  en:"Meanwhile warm the oil in the pan on medium-low (about 4/9) with sliced garlic and chilli: induction reacts instantly, so pull the heat the moment the garlic is fragrant, before it colours." },
+      gas:{ it:"Nel frattempo scalda l'olio in padella a fiamma bassa con l'aglio a fettine e il peperoncino; tieni la padella leggermente decentrata sulla fiamma, perché il gas scalda anche i bordi, e togli dal fuoco appena l'aglio profuma.",
+            en:"Meanwhile warm the oil on a low flame with sliced garlic and chilli; keep the pan slightly off-centre over the flame, since gas also heats the sides, and take it off as soon as the garlic is fragrant." } },
+    { text:{ it:"Scola gli spaghetti molto al dente tenendo da parte un mestolo di acqua di cottura.",
+             en:"Drain the spaghetti very al dente, keeping a ladle of the cooking water." } },
+    { induction:{ it:"Rialza la padella a potenza media, unisci la pasta e un goccio d'acqua e manteca 30–60 secondi finché l'olio diventa cremoso. Spegni, aggiungi il prezzemolo e servi.",
+                  en:"Bring the pan back to medium, add the pasta and a splash of water, and toss for 30–60 seconds until the oil turns glossy. Turn off, add parsley and serve." },
+      gas:{ it:"Riporta la padella a fiamma media, unisci la pasta e un goccio d'acqua e salta 30–60 secondi muovendo spesso, perché la fiamma è meno uniforme, finché l'olio diventa cremoso. Spegni, aggiungi il prezzemolo e servi.",
+            en:"Return the pan to a medium flame, add the pasta and a splash of water, and toss for 30–60 seconds, moving often since the flame is less even, until glossy. Turn off, add parsley and serve." } },
+  ],
+},
+
+/* ---------- SECONDI ---------- */
+{
+  id:"branzino-in-padella-al-limone",
+  section:"secondi",
+  featured:true,
+  servingsBase:2,
+  servingsUnit:"persone",
+  time:{prep:10, cook:12},
+  difficulty:"media",
+  image:null,
+  title:{ it:"Branzino in padella al limone", en:"Pan-seared sea bass with lemon" },
+  standfirst:{ it:"Pelle croccante, cuore morbido: il mare in dodici minuti.",
+               en:"Crisp skin, tender heart: the sea in twelve minutes." },
+  caption:{ it:"Filetti di branzino con salsa al limone e prezzemolo.",
+            en:"Sea bass fillets with lemon-parsley sauce." },
+  ingredients:[
+    { name:{it:"Filetti di branzino", en:"Sea bass fillets"}, qty:2, unit:"", note:{it:"circa 150 g l'uno", en:"about 150 g each"} },
+    { name:{it:"Limone", en:"Lemon"}, qty:1, unit:"" },
+    { name:{it:"Olio extravergine", en:"Extra-virgin olive oil"}, qty:30, unit:"ml" },
+    { name:{it:"Aglio", en:"Garlic"}, qty:1, unit:"", note:{it:"spicchio", en:"clove"} },
+    { name:{it:"Prezzemolo", en:"Parsley"}, qty:null, unit:"qb" },
+    { name:{it:"Sale e pepe", en:"Salt and pepper"}, qty:null, unit:"qb" },
+  ],
+  equipment:[
+    {it:"Padella antiaderente", en:"Non-stick pan"},
+    {it:"Spatola sottile", en:"Thin fish spatula"},
+    {it:"Carta assorbente", en:"Paper towel"},
+  ],
+  steps:[
+    { text:{ it:"Asciuga bene i filetti con carta assorbente e condiscili con sale e pepe: la pelle asciutta è il segreto della croccantezza.",
+             en:"Pat the fillets very dry and season with salt and pepper: dry skin is the secret to crispness." } },
+    { induction:{ it:"Scalda l'olio in padella a potenza medio-alta (circa 7/9) con l'aglio schiacciato; l'induzione arriva in temperatura in fretta, aspetta che l'olio luccichi appena.",
+                  en:"Heat the oil on medium-high (about 7/9) with the crushed garlic; induction gets hot fast, so wait until the oil just shimmers." },
+      gas:{ it:"Scalda l'olio in padella a fiamma medio-alta con l'aglio schiacciato; con il gas conviene preriscaldare la padella vuota 30 secondi in più, così il fondo è ben caldo prima di versare l'olio.",
+            en:"Heat the oil on a medium-high flame with the crushed garlic; with gas, pre-heat the empty pan for 30 seconds longer so the base is properly hot before the oil goes in." } },
+    { induction:{ it:"Adagia i filetti dal lato pelle e cuoci 4–5 minuti senza muoverli; mantieni la potenza costante, perché l'induzione non oscilla e la pelle si asciuga in modo uniforme.",
+                  en:"Lay the fillets skin-side down and cook 4–5 minutes without moving them; keep the power steady, as induction doesn't fluctuate and the skin dries evenly." },
+      gas:{ it:"Adagia i filetti dal lato pelle e cuoci 4–5 minuti senza muoverli; con la fiamma controlla che non ci siano punti troppo caldi al centro, eventualmente ruota la padella di un quarto a metà cottura.",
+            en:"Lay the fillets skin-side down and cook 4–5 minutes without moving them; with a flame, watch for hot spots in the centre and rotate the pan a quarter-turn halfway if needed." } },
+    { text:{ it:"Gira i filetti per un minuto dal lato polpa, poi spegni. Sfuma con il succo di mezzo limone e il prezzemolo, usando il calore residuo per non seccare il pesce.",
+             en:"Flip the fillets for one minute on the flesh side, then turn off the heat. Finish with the juice of half a lemon and parsley, using residual heat so the fish stays moist." } },
+    { text:{ it:"Servi subito con le restanti fette di limone accanto.",
+             en:"Serve at once with the remaining lemon wedges alongside." } },
+  ],
+},
+
+/* ---------- DOLCI (no stovetop → the method toggle hides itself) ---------- */
+{
+  id:"tiramisu-classico",
+  section:"dolci",
+  featured:true,
+  servingsBase:2,
+  servingsUnit:"persone",
+  time:{prep:20, cook:0},
+  difficulty:"facile",
+  image:null,
+  title:{ it:"Tiramisù classico", en:"Classic tiramisù" },
+  standfirst:{ it:"Nessun fornello, solo pazienza: il dolce che aspetta in frigo.",
+               en:"No stove, just patience: the dessert that waits in the fridge." },
+  caption:{ it:"Strati di savoiardi al caffè e crema al mascarpone.",
+            en:"Layers of coffee-soaked ladyfingers and mascarpone cream." },
+  ingredients:[
+    { name:{it:"Savoiardi", en:"Ladyfingers"}, qty:12, unit:"" },
+    { name:{it:"Mascarpone", en:"Mascarpone"}, qty:250, unit:"g" },
+    { name:{it:"Uova", en:"Eggs"}, qty:2, unit:"", note:{it:"tuorli e albumi separati", en:"yolks and whites separated"} },
+    { name:{it:"Zucchero", en:"Sugar"}, qty:60, unit:"g" },
+    { name:{it:"Caffè", en:"Coffee"}, qty:150, unit:"ml", note:{it:"freddo", en:"cooled"} },
+    { name:{it:"Cacao amaro", en:"Unsweetened cocoa"}, qty:null, unit:"qb" },
+  ],
+  equipment:[
+    {it:"Due ciotole", en:"Two mixing bowls"},
+    {it:"Fruste elettriche", en:"Electric whisk"},
+    {it:"Pirofila piccola", en:"Small baking dish"},
+    {it:"Setaccio", en:"Fine sieve"},
+  ],
+  steps:[
+    { text:{ it:"Monta i tuorli con lo zucchero fino a un composto chiaro e spumoso, poi incorpora il mascarpone lavorando poco per non smontarlo.",
+             en:"Whip the yolks with the sugar until pale and fluffy, then fold in the mascarpone, working gently so it doesn't deflate." } },
+    { text:{ it:"Monta gli albumi a neve ferma e uniscili alla crema dal basso verso l'alto, poco alla volta.",
+             en:"Whisk the egg whites to stiff peaks and fold them into the cream from the bottom up, a little at a time." } },
+    { text:{ it:"Inzuppa velocemente i savoiardi nel caffè freddo e disponi un primo strato nella pirofila.",
+             en:"Dip the ladyfingers quickly in the cooled coffee and lay a first layer in the dish." } },
+    { text:{ it:"Alterna crema e savoiardi, chiudi con la crema e livella. Copri e riposa in frigo almeno 4 ore.",
+             en:"Alternate cream and ladyfingers, finish with cream and level it. Cover and rest in the fridge at least 4 hours." } },
+    { text:{ it:"Prima di servire, spolvera con abbondante cacao amaro setacciato.",
+             en:"Just before serving, dust generously with sifted cocoa." } },
+  ],
+},
+
+/* ---------- COCKTAIL (unit = glasses, no cooking) ---------- */
+{
+  id:"negroni",
+  section:"cocktail",
+  featured:true,
+  servingsBase:2,
+  servingsUnit:"bicchieri",
+  time:{prep:3, cook:0},
+  difficulty:"facile",
+  image:null,
+  title:{ it:"Negroni", en:"Negroni" },
+  standfirst:{ it:"Tre parti uguali, un secolo di equilibrio. Nato a Firenze, bevuto ovunque.",
+               en:"Three equal parts, a century of balance. Born in Florence, drunk everywhere." },
+  caption:{ it:"Negroni servito sul ghiaccio con scorza d'arancia.",
+            en:"Negroni served over ice with an orange twist." },
+  ingredients:[
+    { name:{it:"Gin", en:"Gin"}, qty:60, unit:"ml" },
+    { name:{it:"Vermut rosso", en:"Sweet red vermouth"}, qty:60, unit:"ml" },
+    { name:{it:"Bitter Campari", en:"Campari"}, qty:60, unit:"ml" },
+    { name:{it:"Arancia", en:"Orange"}, qty:2, unit:"", note:{it:"fette o scorze", en:"slices or twists"} },
+    { name:{it:"Ghiaccio", en:"Ice"}, qty:null, unit:"qb" },
+  ],
+  equipment:[
+    {it:"Bicchiere tumbler basso", en:"Rocks glass"},
+    {it:"Cucchiaio da bar", en:"Bar spoon"},
+    {it:"Cubetti di ghiaccio grandi", en:"Large ice cubes"},
+  ],
+  steps:[
+    { text:{ it:"Riempi il bicchiere di ghiaccio e lascialo raffreddare mentre prepari le dosi.",
+             en:"Fill the glass with ice and let it chill while you measure." } },
+    { text:{ it:"Versa gin, vermut e Campari in parti uguali direttamente sul ghiaccio.",
+             en:"Pour gin, vermouth and Campari in equal parts straight over the ice." } },
+    { text:{ it:"Mescola dolcemente con il cucchiaio per 10–15 secondi per raffreddare e diluire quel tanto che basta.",
+             en:"Stir gently with the spoon for 10–15 seconds to chill and dilute just enough." } },
+    { text:{ it:"Guarnisci con la scorza d'arancia, strizzandola sopra il bicchiere per liberare gli oli.",
+             en:"Garnish with the orange twist, squeezing it over the glass to release its oils." } },
+  ],
+},
+];
+
+/* =========================================================================
+   3) STATE
+   ========================================================================= */
+const state = {
+  lang: (localStorage.getItem("ric_lang") || "it"),
+  section: "primi",
+  view: "list",          // "list" | "recipe"
+  recipeId: null,
+  people: 2,
+  method: "induction",   // "induction" | "gas"
+  color: false,
+};
+if(!I18N[state.lang]) state.lang = "it";
+
+/* =========================================================================
+   4) HELPERS
+   ========================================================================= */
+const t = (k) => I18N[state.lang][k];
+const tf = (obj) => obj ? (obj[state.lang] || obj.it || Object.values(obj)[0]) : "";
+const el = (id) => document.getElementById(id);
+const recipeById = (id) => RECIPES.find(r => r.id === id);
+const usesStovetop = (r) => r.steps.some(s => s.induction || s.gas);
+
+function fmtPieces(n){
+  const whole = Math.floor(n + 1e-9);
+  let frac = n - whole;
+  const glyph = {0:"", 0.25:"¼", 0.5:"½", 0.75:"¾"};
+  let key = Math.round(frac*4)/4;
+  let carry = 0;
+  if(key === 1){ carry = 1; key = 0; }
+  const w = whole + carry;
+  const g = glyph[key] || "";
+  if(w === 0 && g) return g;
+  if(g) return w + " " + g;
+  return String(w);
+}
+
+function scaledQty(ing, factor){
+  if(ing.qty == null) return {qb:true, text:t("qb")};
+  let v = (ing.scale === false) ? ing.qty : ing.qty * factor;
+  if(ing.unit === "g" || ing.unit === "ml"){
+    v = v >= 100 ? Math.round(v/5)*5 : Math.round(v);
+    return {qb:false, text:`${v} ${ing.unit}`};
+  }
+  // countable pieces (eggs, cloves, slices, glasses…)
+  v = Math.round(v*4)/4;
+  return {qb:false, text:fmtPieces(v)};
+}
+
+function unitWord(unitKey, count){
+  // singular / plural for the servings label
+  if(unitKey === "bicchieri") return t(count === 1 ? "bicchiere" : "bicchieri");
+  return t(count === 1 ? "persona" : "persone");
+}
+
+function currentDateStr(){
+  const locales = {it:"it-IT",en:"en-GB",de:"de-DE",fr:"fr-FR",es:"es-ES"};
+  const d = new Date();
+  try { return d.toLocaleDateString(locales[state.lang]||"it-IT",
+        {weekday:"long", day:"numeric", month:"long", year:"numeric"}); }
+  catch(e){ return d.toDateString(); }
+}
+
+/* engraved-style illustration placeholder, per section */
+function placeholder(section){
+  const ink = "#1B1712";
+  const art = {
+    primi:`<circle cx="100" cy="70" r="52" fill="none" stroke="${ink}" stroke-width="2"/>
+      <circle cx="100" cy="70" r="40" fill="none" stroke="${ink}" stroke-width="1"/>
+      <path d="M70 70 q30 -26 60 0" fill="none" stroke="${ink}" stroke-width="1.4"/>
+      <path d="M66 76 q34 -20 68 0" fill="none" stroke="${ink}" stroke-width="1.4"/>
+      <path d="M74 82 q26 -14 52 0" fill="none" stroke="${ink}" stroke-width="1.4"/>`,
+    secondi:`<path d="M46 70 q26 -30 74 -18 q30 8 34 18 q-4 10 -34 18 q-48 12 -74 -18 z" fill="none" stroke="${ink}" stroke-width="2"/>
+      <path d="M154 70 l16 -12 v24 z" fill="none" stroke="${ink}" stroke-width="2"/>
+      <circle cx="70" cy="66" r="3.2" fill="${ink}"/>
+      <path d="M92 60 q14 10 0 20 M108 58 q16 12 0 24 M124 60 q14 10 0 20" fill="none" stroke="${ink}" stroke-width="1"/>`,
+    dolci:`<path d="M58 92 h84 l-6 -34 h-72 z" fill="none" stroke="${ink}" stroke-width="2"/>
+      <path d="M64 58 q36 -18 72 0" fill="none" stroke="${ink}" stroke-width="2"/>
+      <path d="M100 32 v16 M100 32 q-8 6 0 12" fill="none" stroke="${ink}" stroke-width="1.6"/>
+      <path d="M72 72 h56 M70 82 h60" stroke="${ink}" stroke-width="0.8"/>`,
+    cocktail:`<path d="M64 40 h72 l-30 40 v28 h14 v4 h-40 v-4 h14 v-28 z" fill="none" stroke="${ink}" stroke-width="2"/>
+      <circle cx="118" cy="52" r="7" fill="none" stroke="${ink}" stroke-width="1.4"/>
+      <path d="M118 45 v14 M111 52 h14" stroke="${ink}" stroke-width="1"/>`,
+  }[section] || "";
+  return `<div class="placeholder"><svg viewBox="0 0 200 140" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${t("illustration")}">
+    <defs><pattern id="ht-${section}" width="4" height="4" patternUnits="userSpaceOnUse">
+      <circle cx="1" cy="1" r="0.7" fill="rgba(27,23,18,.30)"/></pattern></defs>
+    <rect width="200" height="140" fill="var(--paper-2)"/>
+    <rect width="200" height="140" fill="url(#ht-${section})"/>
+    ${art}
+  </svg></div>`;
+}
+
+function figureHTML(recipe){
+  if(recipe.image){
+    return `<div class="photo"><img src="${recipe.image}" alt="${tf(recipe.title)}" loading="lazy"></div>`;
+  }
+  return `<div class="photo">${placeholder(recipe.section)}</div>`;
+}
+
+/* =========================================================================
+   5) RENDER — chrome (masthead, flags, nav, static labels)
+   ========================================================================= */
+function renderChrome(){
+  document.documentElement.lang = state.lang;
+  document.body.className = (state.color ? "color " : "") + state.lang;
+
+  el("motto").textContent = t("motto");
+  el("tl-edition").textContent = t("edition");
+  el("tl-price").textContent = t("price");
+  el("dateline-left").textContent = currentDateStr();
+  el("foot-line").textContent = t("foot");
+
+  // flags
+  const flags = el("flags");
+  flags.innerHTML = LANGS.map(l =>
+    `<button data-lang="${l.code}" title="${l.label}" aria-label="${l.label}"
+      aria-current="${l.code===state.lang}"><span class="fi fi-${l.flag}"></span></button>`).join("");
+
+  // section nav
+  el("nav").innerHTML = SECTIONS.map(s =>
+    `<a href="#/${s}" data-section="${s}" aria-current="${s===state.section && state.view==='list'}">${t("sections")[s]}</a>`).join("");
+}
+
+/* =========================================================================
+   6) RENDER — front page (a section's list of recipes)
+   ========================================================================= */
+function renderList(){
+  el("listView").classList.remove("hidden");
+  el("articleView").classList.remove("active");
+  el("sectionTitle").textContent = t("sections")[state.section];
+  el("sectionKicker").textContent = t("frontpage");
+
+  const items = RECIPES.filter(r => r.section === state.section);
+  const lead = items[0];
+  const rest = items.slice(1);
+
+  const cardHTML = (r) => `
+    <a class="card" href="#/${r.section}/${r.id}" data-recipe="${r.id}">
+      <div class="figure">${figureHTML(r)}</div>
+      <div class="headline">${tf(r.title)}</div>
+      <div class="stand">${tf(r.standfirst)}</div>
+      <div class="byline">
+        <span>${t("prep")} ${r.time.prep+r.time.cook} ${t("min")}</span><span class="dot">◆</span>
+        <span>${t(r.difficulty)}</span>
+      </div>
+    </a>`;
+
+  el("frontpage").innerHTML = `
+    <div class="lead">${ lead ? cardHTML(lead) : "" }</div>
+    <div class="aside">${ rest.map(cardHTML).join("") }</div>`;
+
+  el("listView").classList.add("fade");
+  setTimeout(()=>el("listView").classList.remove("fade"), 420);
+}
+
+/* =========================================================================
+   7) RENDER — a single recipe article
+   ========================================================================= */
+function renderRecipe(){
+  const r = recipeById(state.recipeId);
+  if(!r){ goSection(state.section); return; }
+
+  el("listView").classList.add("hidden");
+  const view = el("articleView");
+  view.classList.add("active");
+
+  const factor = state.people / r.servingsBase;
+  const stove = usesStovetop(r);
+
+  // ingredients
+  const ingHTML = r.ingredients.map(ing => {
+    const q = scaledQty(ing, factor);
+    const note = ing.note ? ` <span class="ing-note">(${tf(ing.note)})</span>` : "";
+    return `<li><span class="name">${tf(ing.name)}${note}</span>
+      <span class="qty${q.qb?' qb':''}">${q.text}</span></li>`;
+  }).join("");
+
+  // equipment
+  const equipHTML = r.equipment.map(e => `<li>${tf(e)}</li>`).join("");
+
+  // steps (swap induction/gas)
+  const stepsHTML = r.steps.map(s => {
+    let text, tag = "";
+    if(s.text){ text = tf(s.text); }
+    else {
+      text = tf(state.method === "gas" ? s.gas : s.induction);
+      tag = `<span class="method-tag">${state.method==='gas'?t('fire'):t('induction')}</span>`;
+    }
+    return `<li><p>${text}${tag}</p></li>`;
+  }).join("");
+
+  // servings label
+  const servLabel = `${t("ingredients")} <span class="subttl-inline"></span>`;
+  const unitLabel = unitWord(r.servingsUnit, state.people);
+
+  // method cell (hidden when the recipe never touches a hob)
+  const methodCell = stove ? `
+    <div class="cell">
+      <div class="lbl">${t("methodLbl")}</div>
+      <div class="toggle" role="group" aria-label="${t("methodLbl")}">
+        <button data-method="induction" aria-pressed="${state.method==='induction'}"><span class="ic">⚡</span>${t("induction")}</button>
+        <button data-method="gas" aria-pressed="${state.method==='gas'}"><span class="ic">🔥</span>${t("fire")}</button>
+      </div>
+    </div>` : `
+    <div class="cell">
+      <div class="lbl">${t("viewLbl")}</div>
+      <button class="viewtoggle" id="viewToggle">${state.color ? t("seeBW") : t("seeColor")}</button>
+    </div>`;
+
+  // when method IS shown, put the photo toggle in the meta row instead
+  const photoToggleInline = stove ? `
+    <div style="text-align:center;margin-top:14px">
+      <button class="viewtoggle" id="viewToggle">${state.color ? t("seeBW") : t("seeColor")}</button>
+    </div>` : "";
+
+  view.innerHTML = `
+    <div class="backbar" id="backbar">‹ ${t("back")}</div>
+    <div class="art-head">
+      <div class="art-kicker">${t("sections")[r.section]}</div>
+      <h2>${tf(r.title)}</h2>
+      <div class="art-stand">${tf(r.standfirst)}</div>
+      <div class="art-meta">
+        ${r.time.prep ? `<span>${t("prep")} <b>${r.time.prep} ${t("min")}</b></span>`:""}
+        ${r.time.cook ? `<span>${t("cook")} <b>${r.time.cook} ${t("min")}</b></span>`:""}
+        <span>${t("difficulty")} <b>${t(r.difficulty)}</b></span>
+      </div>
+    </div>
+
+    <div class="art-body">
+      <figure class="lead-photo">
+        ${figureHTML(r)}
+        <figcaption>
+          <span>${tf(r.caption)}</span>
+          <span class="credit">${r.image ? "" : t("illustration")}</span>
+        </figcaption>
+      </figure>
+
+      <div class="panel">
+        <div class="cell">
+          <div class="lbl">${t("servingsLbl")}</div>
+          <div class="stepper">
+            <button id="minus" aria-label="−" ${state.people<=1?'disabled':''}>−</button>
+            <span class="count" id="peopleCount" aria-live="polite">${state.people}</span>
+            <button id="plus" aria-label="+" ${state.people>=20?'disabled':''}>+</button>
+            <span class="unit">${unitLabel}</span>
+          </div>
+        </div>
+        ${methodCell}
+      </div>
+      ${photoToggleInline}
+
+      <div class="cols">
+        <aside class="factbox">
+          <h3>${t("ingredients")}</h3>
+          <div class="subttl">${t("forX")} ${state.people} ${unitLabel}</div>
+          <ul class="ingredients">${ingHTML}</ul>
+          <div class="equip">
+            <h4>${t("equipment")}</h4>
+            <ul>${equipHTML}</ul>
+          </div>
+        </aside>
+        <div class="procedure">
+          <h3>${t("procedure")}</h3>
+          <ol class="steps">${stepsHTML}</ol>
+        </div>
+      </div>
+    </div>`;
+
+  view.classList.add("fade");
+  setTimeout(()=>view.classList.remove("fade"), 420);
+  wireRecipeControls();
+  window.scrollTo({top:0, behavior:"instant" in window ? "instant" : "auto"});
+}
+
+/* =========================================================================
+   8) EVENTS
+   ========================================================================= */
+function wireRecipeControls(){
+  const minus = el("minus"), plus = el("plus");
+  if(minus) minus.onclick = () => { if(state.people>1){ state.people--; renderRecipe(); } };
+  if(plus)  plus.onclick  = () => { if(state.people<20){ state.people++; renderRecipe(); } };
+
+  document.querySelectorAll("[data-method]").forEach(b => {
+    b.onclick = () => { state.method = b.dataset.method; renderRecipe(); };
+  });
+  const vt = el("viewToggle");
+  if(vt) vt.onclick = () => { state.color = !state.color; document.body.classList.toggle("color", state.color); vt.textContent = state.color ? t("seeBW") : t("seeColor"); };
+
+  const bb = el("backbar");
+  if(bb) bb.onclick = () => { location.hash = "#/" + state.section; };
+}
+
+// flags + nav (delegated, survive re-render of chrome)
+document.addEventListener("click", (e) => {
+  const flag = e.target.closest("[data-lang]");
+  if(flag){ setLang(flag.dataset.lang); return; }
+});
+
+function setLang(code){
+  if(!I18N[code]) return;
+  state.lang = code;
+  localStorage.setItem("ric_lang", code);
+  renderChrome();
+  if(state.view === "recipe") renderRecipe(); else renderList();
+}
+
+function goSection(section){
+  if(!SECTIONS.includes(section)) section = "primi";
+  state.section = section;
+  state.view = "list";
+  state.recipeId = null;
+  renderChrome();
+  renderList();
+}
+
+function goRecipe(id){
+  const r = recipeById(id);
+  if(!r){ goSection(state.section); return; }
+  state.section = r.section;
+  state.recipeId = id;
+  state.view = "recipe";
+  state.people = r.servingsBase;                       // reset portions per recipe
+  state.method = usesStovetop(r) ? "induction" : "induction";
+  renderChrome();
+  renderRecipe();
+}
+
+/* =========================================================================
+   9) ROUTING (hash-based → deep links + back button work on GitHub Pages)
+   ========================================================================= */
+function router(){
+  const parts = location.hash.replace(/^#\/?/, "").split("/").filter(Boolean);
+  if(parts.length >= 2){ goRecipe(parts[1]); }
+  else if(parts.length === 1){ goSection(parts[0]); }
+  else { goSection("primi"); }
+}
+window.addEventListener("hashchange", router);
+
+/* boot */
+renderChrome();
+router();
+</script>
+</body>
+</html>
